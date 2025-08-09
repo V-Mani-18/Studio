@@ -16,13 +16,13 @@ import WorkIcon from "@mui/icons-material/Work";
 import InfoIcon from "@mui/icons-material/Info";
 import PaymentIcon from "@mui/icons-material/Payment"; // Add this import
 import { useTheme } from "@mui/material/styles";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
 const menuItems = [
   { label: "Home", icon: <HomeIcon /> },
   { label: "Clients", icon: <PeopleIcon /> },
   { label: "Payment", icon: <PaymentIcon /> }, // Change to PaymentIcon
-  { label: "About", icon: <InfoIcon /> },
+  { label: "Report", icon: <InfoIcon /> },
 ];
 
 const logoUrl = "/LandingBack.jpeg"; // Replace with your logo/image
@@ -33,35 +33,41 @@ function ManagerAdministration() {
   const [navValue, setNavValue] = useState(0);
   const [hovered, setHovered] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation(); // Add this line
+
+  // Determine if we are on the home page
+  const isHomePage = location.pathname === "/manager-dashboard/home";
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "#fff" }}>
       {isMobile ? (
         <>
           {/* Top AppBar for mobile */}
-          <AppBar position="static" color="white" elevation={3} sx={{ boxShadow: 3,width:"104vw" }}>
-            <Toolbar sx={{ justifyContent: "center", alignItems: "center" }}>
-              <img
-                src={logoUrl}
-                alt="Logo"
-                style={{ height: 32, marginRight: 12, borderRadius: 8, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}
-              />
-              <Typography
-                variant="h6"
-                sx={{
-                  flexGrow: 1,
-                  textAlign: "center",
-                  fontFamily: "'Grand Hotel', cursive",
-                  fontSize: 20,
-                  letterSpacing: 2,
-                }}
-              >
-                LC Studio Management
-              </Typography>
-            </Toolbar>
-          </AppBar>
+          {isHomePage && ( // Only show on home page
+            <AppBar position="static" color="white" elevation={3} sx={{ boxShadow: 3, width: "104vw" }}>
+              <Toolbar sx={{ justifyContent: "center", alignItems: "center" }}>
+                <img
+                  src={logoUrl}
+                  alt="Logo"
+                  style={{ height: 32, marginRight: 12, borderRadius: 8, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}
+                />
+                <Typography
+                  variant="h6"
+                  sx={{
+                    flexGrow: 1,
+                    textAlign: "center",
+                    fontFamily: "'Grand Hotel', cursive",
+                    fontSize: 20,
+                    letterSpacing: 2,
+                  }}
+                >
+                  LC Studio Management
+                </Typography>
+              </Toolbar>
+            </AppBar>
+          )}
           {/* Main content placeholder */}
-          <Box sx={{ flex: 1, bgcolor: "#fff", minHeight: "80vh", width:"100%" }}>
+          <Box sx={{ flex: 1, bgcolor: "#fff", minHeight: "80vh", width: "100%" }}>
             <Outlet />
           </Box>
           {/* Attractive Fixed Bottom Navigation */}
@@ -128,7 +134,7 @@ function ManagerAdministration() {
             position="static"
             color="primary"
             elevation={3}
-            sx={{ boxShadow: 3, bgcolor: "#1976d2",width: "100vw" }}
+            sx={{ boxShadow: 3, bgcolor: "#1976d2", width: "100vw" }}
           >
             <Toolbar sx={{ minHeight: 56, px: 4 }}>
               {/* <img

@@ -13,12 +13,16 @@ import LockIcon from "@mui/icons-material/Lock";
 import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
 import PlaceIcon from "@mui/icons-material/Place";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Dialog as MuiDialog } from "@mui/material"; // For confirmation dialog
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 
 function ClientPage() {
   const [clients, setClients] = useState([]);
   const [selected, setSelected] = useState(null);
   const [editField, setEditField] = useState(null);
   const [editValues, setEditValues] = useState({});
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -75,9 +79,31 @@ function ClientPage() {
     setEditValues({});
   };
 
+  // Delete client from backend and state
+  const handleDeleteUser = async () => {
+    if (!selected) return;
+    await fetch(`http://localhost:5000/api/clients/${selected._id}`, {
+      method: "DELETE"
+    });
+    setClients(prev => prev.filter(c => c._id !== selected._id));
+    setSelected(null);
+    setDeleteDialogOpen(false);
+  };
+
   return (
     <Box sx={{ p: 3, maxWidth: isMobile ? 600 : 1100, mx: "auto" }}>
-      <Typography variant="h5" sx={{ mb: 3, fontWeight: 700, textAlign: "center" }}>
+      <Typography
+        variant="h5"
+        sx={{
+          mb: 3,
+          fontWeight: 700,
+          textAlign: "center",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        <PersonIcon sx={{ mr: 1, verticalAlign: "middle", color: "#1976d2" }} />
         Clients View
       </Typography>
       <Stack spacing={2}>
@@ -196,6 +222,15 @@ function ClientPage() {
               </Typography>
               <Typography variant="body1" sx={{ ml: 1 }}>
                 {selected?.name}
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <AccountCircleIcon color="primary" /> {/* Changed icon */}
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, minWidth: 80 }}>
+                Studio Name:
+              </Typography>
+              <Typography variant="body1" sx={{ ml: 1 }}>
+                {selected?.studio}
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -322,6 +357,15 @@ function ClientPage() {
                 {selected?.place || "N/A"}
               </Typography>
             </Box>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <PhotoCameraIcon color="primary" />
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, minWidth: 80 }}>
+                Studio Name:
+              </Typography>
+              <Typography variant="body1" sx={{ ml: 1 }}>
+                {selected?.studio}
+              </Typography>
+            </Box>
           </Stack>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
@@ -341,8 +385,49 @@ function ClientPage() {
           >
             Close
           </Button>
+          <Button
+            onClick={() => setDeleteDialogOpen(true)}
+            variant="contained"
+            color="error"
+            sx={{
+              fontWeight: 700,
+              borderRadius: 2,
+              px: 4,
+              boxShadow: 2,
+              bgcolor: "#d32f2f",
+              "&:hover": { bgcolor: "#b71c1c" }
+            }}
+            startIcon={<DeleteIcon />}
+          >
+            Delete User
+          </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <MuiDialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this user?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button color="primary" variant="outlined" sx={{
+              fontWeight: 700,
+              borderRadius: 2,
+              color: "#fff",
+              px: 4,
+              boxShadow: 2,
+              bgcolor: "#1976d2",
+              "&:hover": { bgcolor: "#115293" }
+            }} onClick={() => setDeleteDialogOpen(false)} >
+               {<CloseIcon />}
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteUser} color="error" variant="contained" startIcon={<DeleteIcon />}>
+            Delete
+          </Button>
+        </DialogActions>
+      </MuiDialog>
     </Box>
   );
 }
