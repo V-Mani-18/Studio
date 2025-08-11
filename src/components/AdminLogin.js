@@ -1,14 +1,31 @@
 import React, { useState } from "react";
 import { Box, Typography, TextField, Button } from "@mui/material";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AdminLogin = ({ onBack }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle admin login logic
-    alert(`Admin Login\nUsername: ${username}\nPassword: ${password}`);
+    setError("");
+    try {
+      const res = await axios.get("http://localhost:5000/api/clients");
+      // Find a client with matching username and password
+      const admin = res.data.find(
+        (c) => c.username === username && c.password === password
+      );
+      if (admin) {
+        navigate("/admin-home");
+      } else {
+        setError("Invalid username or password");
+      }
+    } catch (err) {
+      setError("Login failed. Try again.");
+    }
   };
 
   return (
@@ -25,7 +42,13 @@ const AdminLogin = ({ onBack }) => {
       >
         Admin Login
       </Typography>
-      <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column" gap={2}>
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        display="flex"
+        flexDirection="column"
+        gap={2}
+      >
         <TextField
           label="Username"
           variant="outlined"
@@ -43,6 +66,11 @@ const AdminLogin = ({ onBack }) => {
           required
           fullWidth
         />
+        {error && (
+          <Typography color="error" sx={{ textAlign: "center" }}>
+            {error}
+          </Typography>
+        )}
         <Button type="submit" variant="contained" color="primary" fullWidth>
           Submit
         </Button>
