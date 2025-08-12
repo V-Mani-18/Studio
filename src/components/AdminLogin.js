@@ -19,6 +19,7 @@ const AdminLogin = ({ onBack }) => {
         (c) => c.username === username && c.password === password
       );
       if (admin) {
+        localStorage.setItem("studioName", admin.studio); // Save studio name
         navigate("/admin-home");
       } else {
         setError("Invalid username or password");
