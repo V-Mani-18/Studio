@@ -25,6 +25,7 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import SearchIcon from "@mui/icons-material/Search";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useNavigate } from "react-router-dom";
 
 const eventOptions = [
   "Birthday",
@@ -54,6 +55,7 @@ function UserManagement() {
   const [userListOpen, setUserListOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Fetch users from backend
   useEffect(() => {
@@ -335,7 +337,7 @@ function UserManagement() {
             ) : (
               filteredUsers.map(user => (
                 <Box
-                  key={user.id}
+                  key={user._id}
                   sx={{
                     display: "flex",
                     alignItems: "center",
@@ -343,12 +345,15 @@ function UserManagement() {
                     p: 1.5,
                     bgcolor: "#e3f2fd",
                     borderRadius: 2,
-                    boxShadow: 1
+                    boxShadow: 1,
+                    cursor: "pointer"
                   }}
+                  onClick={() => navigate(`/admin-home/user/${user._id}`)}
                 >
                   <Typography sx={{ fontWeight: 600 }}>{user.name}</Typography>
-                   <Typography sx={{ color: "#4e4e4eff", fontWeight: 500, }}>
-  {user.date ? user.date.slice(0, 10) : ""}</Typography>
+                  <Typography sx={{ color: "#4e4e4eff", fontWeight: 500 }}>
+                    {user.date ? user.date.slice(0, 10) : ""}
+                  </Typography>
                   <Typography sx={{ color: "#1976d2", fontWeight: 500 }}>{user.event}</Typography>
                 </Box>
               ))
