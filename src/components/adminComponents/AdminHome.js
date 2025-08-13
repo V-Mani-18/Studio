@@ -15,6 +15,7 @@ import {
 
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
 const menuItems = [
   "Home",
@@ -164,8 +165,9 @@ const AdminHome = () => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const showAppBar = useScrollDirection();
   const studioName = localStorage.getItem("studioName") || "LC Studio";
-
-
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isIndex = location.pathname === "/admin-home";
 
   // Image slider state
   const [currentImg, setCurrentImg] = useState(0);
@@ -215,12 +217,17 @@ const AdminHome = () => {
                             sx={{
                               color: "black",
                               fontWeight: 600,
-                              fontSize: 20, // increased font size
+                              fontSize: 20,
                               cursor: "pointer",
                               px: 1,
                               py: 0.5,
                               borderRadius: 2,
                               "&:hover": { bgcolor: "rgba(0,0,0,0.08)" }
+                            }}
+                            onClick={() => {
+                              if (item === "Users") navigate("/admin-home/users");
+                              else if (item === "Home") navigate("/admin-home");
+                              // Add more navigation if needed
                             }}
                           >
                             {item}
@@ -288,12 +295,20 @@ const AdminHome = () => {
                   <Box sx={{ width: 220, pt: 2 }}>
                     <List>
                       {menuItems.map((item) => (
-                        <ListItem button key={item} onClick={() => setDrawerOpen(false)}>
+                        <ListItem
+                          button
+                          key={item}
+                          onClick={() => {
+                            setDrawerOpen(false);
+                            if (item === "Users") navigate("/admin-home/users");
+                            // Add more navigation if needed for other items
+                          }}
+                        >
                           <ListItemText
                             primary={item}
                             primaryTypographyProps={{
                               fontWeight: 600,
-                              fontSize: 20, // increased font size
+                              fontSize: 20,
                               color: "black"
                             }}
                           />
@@ -308,230 +323,236 @@ const AdminHome = () => {
         </AppBar>
       </Slide>
       {/* Page content */}
-      <Box sx={{ p: 2, pt: isMobile ? 10 : 15 }}>
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 2 }}>
-          {/* Only one studio image visible at a time with fade effect */}
-          <Box
+      {isIndex ? (
+  <Box sx={{ p: 2, pt: isMobile ? 10 : 15 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 2 }}>
+      {/* Only one studio image visible at a time with fade effect */}
+      <Box
+        sx={{
+          width: isMobile ? 340 : 1040,
+          height: isMobile ? 220 : 540,
+          overflow: "hidden",
+          borderRadius: 12,
+          boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+          mb: 2,
+          position: "relative",
+          background: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        <img
+          src={studioImages[currentImg]}
+          alt={`studio-${currentImg}`}
+          style={{
+            width: isMobile ? 340 : 1040,
+            height: isMobile ? 220 : 540,
+            objectFit: "cover",
+            borderRadius: 12,
+            transition: "opacity 0.5s"
+          }}
+        />
+      </Box>
+      <Typography
+        variant="h6"
+        sx={{
+          maxWidth: 1000,
+          textAlign: "center",
+          color: "black",
+          fontWeight: 500,
+          fontSize: isMobile ? 18 : 24,
+          lineHeight: 1.6
+        }}
+      >
+        We are a Honolulu based photo studio serving the local community and beyond. From fashion to family portraits we are your one stop shop for all photo needs, and also act as a rental studio and an event gallery space.
+      </Typography>
+    </Box>
+    {/* Services section */}
+    <Box sx={{ mt: 6, mb: 2 }}>
+      <Typography
+        variant="h4"
+        sx={{
+          textAlign: "center",
+          fontWeight: 700,
+          mb: 4,
+          color: "black",
+          letterSpacing: 2
+        }}
+      >
+        Services
+      </Typography>
+      <Grid container spacing={6} columns={12} justifyContent="center">
+        {serviceData.map((service, idx) => (
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            key={service.title}
             sx={{
-              width: isMobile ? 340 : 1040,
-              height: isMobile ? 220 : 540,
-              overflow: "hidden",
-              borderRadius: 12,
-              boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
-              mb: 2,
-              position: "relative",
-              background: "#fff",
               display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
+              justifyContent: "center",
+              
             }}
           >
-            <img
-              src={studioImages[currentImg]}
-              alt={`studio-${currentImg}`}
-              style={{
-                width: isMobile ? 340 : 1040,
-                height: isMobile ? 220 : 540,
-                objectFit: "cover",
-                borderRadius: 12,
-                transition: "opacity 0.5s"
+            <Box
+              sx={{
+                perspective: "1200px",
+                width: isMobile ? 320 : 340,
+                height: isMobile ? 370 : 400,
+                bgcolor: "transparent",
+                mb: isMobile ? 4 : 0,
               }}
-            />
-          </Box>
-          <Typography
-            variant="h6"
-            sx={{
-              maxWidth: 1000,
-              textAlign: "center",
-              color: "black",
-              fontWeight: 500,
-              fontSize: isMobile ? 18 : 24,
-              lineHeight: 1.6
-            }}
-          >
-            We are a Honolulu based photo studio serving the local community and beyond. From fashion to family portraits we are your one stop shop for all photo needs, and also act as a rental studio and an event gallery space.
-          </Typography>
-        </Box>
-        {/* Services section */}
-        <Box sx={{ mt: 6, mb: 2 }}>
-          <Typography
-            variant="h4"
-            sx={{
-              textAlign: "center",
-              fontWeight: 700,
-              mb: 4,
-              color: "black",
-              letterSpacing: 2
-            }}
-          >
-            Services
-          </Typography>
-          <Grid container spacing={6} columns={12} justifyContent="center">
-            {serviceData.map((service, idx) => (
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                key={service.title}
+            >
+              <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  
+                  position: "relative",
+                  width: "100%",
+                  height: "100%",
+                  transition: "transform 0.6s",
+                  transformStyle: "preserve-3d",
+                  transform: flipped[idx] ? "rotateY(180deg)" : "none"
                 }}
               >
+                {/* Front Side */}
                 <Box
                   sx={{
-                    perspective: "1200px",
-                    width: isMobile ? 320 : 340,
-                    height: isMobile ? 370 : 400,
-                    bgcolor: "transparent",
-                    mb: isMobile ? 4 : 0,
+                    position: "absolute",
+                    width: "100%",
+                    height: "100%",
+                    backfaceVisibility: "hidden",
+                    bgcolor: "#fff",
+                    borderRadius: 4,
+                    boxShadow: "0 4px 16px rgba(0,0,0,0.10)",
+                    p: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center"
                   }}
                 >
-                  <Box
+                  <img
+                    src={service.img}
+                    alt={service.title}
+                    style={{
+                      width: isMobile ? 280 : 300,
+                      height: isMobile ? 180 : 200,
+                      objectFit: "cover",
+                      borderRadius: 8,
+                      marginBottom: 16
+                    }}
+                  />
+                  <Typography
+                    variant="h6"
                     sx={{
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                      transition: "transform 0.6s",
-                      transformStyle: "preserve-3d",
-                      transform: flipped[idx] ? "rotateY(180deg)" : "none"
+                      fontWeight: 700,
+                      color: "#1976d2",
+                      mb: 1,
+                      textAlign: "center"
                     }}
                   >
-                    {/* Front Side */}
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        width: "100%",
-                        height: "100%",
-                        backfaceVisibility: "hidden",
-                        bgcolor: "#fff",
+                    {service.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "black",
+                      textAlign: "center",
+                      mb: 2
+                    }}
+                  >
+                    {service.desc}
+                  </Typography>
+                  <Box sx={{ textAlign: "center" }}>
+                    <button
+                      style={{
+                        background: "#1976d2",
+                        color: "#fff",
+                        border: "none",
                         borderRadius: 4,
-                        boxShadow: "0 4px 16px rgba(0,0,0,0.10)",
-                        p: 2,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center"
+                        padding: "8px 20px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        fontSize: 16,
+                        boxShadow: "0 2px 8px rgba(25,118,210,0.08)"
                       }}
+                      onClick={() => handleFlip(idx)}
                     >
-                      <img
-                        src={service.img}
-                        alt={service.title}
-                        style={{
-                          width: isMobile ? 280 : 300,
-                          height: isMobile ? 180 : 200,
-                          objectFit: "cover",
-                          borderRadius: 8,
-                          marginBottom: 16
-                        }}
-                      />
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontWeight: 700,
-                          color: "#1976d2",
-                          mb: 1,
-                          textAlign: "center"
-                        }}
-                      >
-                        {service.title}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "black",
-                          textAlign: "center",
-                          mb: 2
-                        }}
-                      >
-                        {service.desc}
-                      </Typography>
-                      <Box sx={{ textAlign: "center" }}>
-                        <button
-                          style={{
-                            background: "#1976d2",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: 4,
-                            padding: "8px 20px",
-                            fontWeight: 600,
-                            cursor: "pointer",
-                            fontSize: 16,
-                            boxShadow: "0 2px 8px rgba(25,118,210,0.08)"
-                          }}
-                          onClick={() => handleFlip(idx)}
-                        >
-                          More Info
-                        </button>
-                      </Box>
-                    </Box>
-                    {/* Back Side */}
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        width: "100%",
-                        height: "100%",
-                        backfaceVisibility: "hidden",
-                        bgcolor: "#fff",
-                        borderRadius: 4,
-                        boxShadow: "0 4px 16px rgba(0,0,0,0.10)",
-                        p: 2,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        transform: "rotateY(180deg)"
-                      }}
-                    >
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontWeight: 700,
-                          color: "#1976d2",
-                          mb: 2,
-                          textAlign: "center"
-                        }}
-                      >
-                        {service.title}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "black",
-                          textAlign: "center",
-                          whiteSpace: "pre-line",
-                          mb: 2
-                        }}
-                      >
-                        {service.details}
-                      </Typography>
-                      <Box sx={{ textAlign: "center" }}>
-                        <button
-                          style={{
-                            background: "#1976d2",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: 4,
-                            padding: "8px 20px",
-                            fontWeight: 600,
-                            cursor: "pointer",
-                            fontSize: 16,
-                            boxShadow: "0 2px 8px rgba(25,118,210,0.08)"
-                          }}
-                          onClick={() => handleFlip(idx)}
-                        >
-                          Back
-                        </button>
-                      </Box>
-                    </Box>
+                      More Info
+                    </button>
                   </Box>
                 </Box>
-              </Grid>
-            ))}
+                {/* Back Side */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    width: "100%",
+                    height: "100%",
+                    backfaceVisibility: "hidden",
+                    bgcolor: "#fff",
+                    borderRadius: 4,
+                    boxShadow: "0 4px 16px rgba(0,0,0,0.10)",
+                    p: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    transform: "rotateY(180deg)"
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 700,
+                      color: "#1976d2",
+                      mb: 2,
+                      textAlign: "center"
+                    }}
+                  >
+                    {service.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "black",
+                      textAlign: "center",
+                      whiteSpace: "pre-line",
+                      mb: 2
+                    }}
+                  >
+                    {service.details}
+                  </Typography>
+                  <Box sx={{ textAlign: "center" }}>
+                    <button
+                      style={{
+                        background: "#1976d2",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 4,
+                        padding: "8px 20px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        fontSize: 16,
+                        boxShadow: "0 2px 8px rgba(25,118,210,0.08)"
+                      }}
+                      onClick={() => handleFlip(idx)}
+                    >
+                      Back
+                    </button>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
           </Grid>
-        </Box>
-      </Box>
+        ))}
+      </Grid>
+    </Box>
+  </Box>
+) : (
+  <Box sx={{ pt: isMobile ? 8 : 10 }}>
+    <Outlet />
+  </Box>
+)}
       {/* Footer Section */}
       <Box
         sx={{
