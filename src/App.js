@@ -7,6 +7,8 @@ import ManagerHome from "./components/mangerComponents/ManagerHome";
 import ClientPage from "./components/mangerComponents/ClientPage";
 import PaymentPage from "./components/mangerComponents/PaymentPage";
 import AdminHome from "./components/adminComponents/AdminHome";
+import UserManagement from "./components/adminComponents/UserManagement";
+import UserDetails from "./components/adminComponents/UserDetails";
 
 function App() {
   return (
@@ -19,10 +21,12 @@ function App() {
           <Route path="home" element={<ManagerHome />} />
           <Route path="clients" element={<ClientPage />} />
           <Route path="payment" element={<PaymentPage />} />
-          </Route>
-          <Route path="/admin-home" element={<AdminHome />} />
+        </Route>
+        <Route path="/admin-home" element={<AdminHome />}>
+          <Route path="users" element={<UserManagement />} />
+          <Route path="user/:id" element={<UserDetails />} />
           {/* Add more nested routes here if needed */}
-       
+        </Route>
       </Routes>
     </BrowserRouter>
   );
