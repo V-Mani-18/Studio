@@ -32,4 +32,14 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Get user by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch user" });
+  }
+});
+
 module.exports = router;
